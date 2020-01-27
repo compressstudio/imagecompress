@@ -1,0 +1,5 @@
+{
+  "name": "First dApp",
+  "start_url": "localhost:4200",
+  "description": "A simple demo of Blockstack Auth"
+}

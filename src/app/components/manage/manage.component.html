@@ -1,0 +1,58 @@
+<!-- Manage Images View -->
+<div class="row">
+  <div class="col-md-12">
+
+    <!-- Display all images -->
+    <div class="row align-items-end">
+      <div class="col-md-3" *ngFor="let image of displayImages; let i = index;" style="padding: 10px;">
+
+        <!-- Image Tile -->
+        <div class="img_tile_outter">
+
+          <!-- Title -->
+          <div class="img_title">
+            {{image.name}}
+          </div>
+
+          <!-- Image -->
+          <div class="choice_box_img_box">
+            <img
+              [src]="(base64Images[image.file] == 'loading' || !base64Images[image.file]) ? '../../../assets/images/default.png' : base64Images[image.file]"
+              class="choice_box_img">
+          </div>
+
+          <!-- Information -->
+
+          <div class="row" style="padding: 7px 0;">
+            <div class="col-7">
+              <div class="info_text">
+                {{image.size / 1024 / 1024 | number:'1.1-2'}}MB | {{image.date | date: 'dd/MM/yyyy'}}
+              </div>
+            </div>
+
+            <div class="col-5 info_text" style="text-align: right;">
+              <!-- Download Image -->
+              <a class="fa fa-download" style="margin: 0 5px; cursor: pointer; color: #5f6265; font-size: 16px;"
+                [href]="base64Images[image.file]" download="{{image.name}}" ngbTooltip="Download"></a>
+
+              <!-- Delete Image -->
+              <i class="fa fa-trash" style="margin: 0 5px; cursor: pointer; font-size: 16px; color: #5f6265;" (click)="deleteImage(i);"
+                ngbTooltip="Delete"></i>
+            </div>
+          </div>
+
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row justify-content-center" style="margin : 10px 0;">
+      <ngb-pagination [collectionSize]="images.length" [(page)]="page" [pageSize]="pageSize" [rotate]="true"
+        [boundaryLinks]="true" (pageChange)="loadDisplayImages()">
+      </ngb-pagination>
+    </div>
+
+  </div>
+</div>

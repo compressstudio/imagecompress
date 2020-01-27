@@ -1,0 +1,38 @@
+/* Image Tile*/
+.img_tile_outter {
+  background-color: white;
+  padding: 10px;
+}
+
+.img_title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: center;
+  padding: 7px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #212529b8;
+}
+
+.info_text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #212529b8;
+}
+
+.choice_box_img_box {
+  margin-bottom: 5px;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+}
+
+.choice_box_img {
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 1px;
+  min-height: 1px;
+}
