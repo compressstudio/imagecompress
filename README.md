@@ -8,7 +8,7 @@ There are wide areas of usage. Starting from resizing of size during uploads to 
 
 There are already many online tools to reduce the weight of your images. But Compress.studio really stands out in this market, by offering you an impeccable quality of service. By default, the site offers image compression which offers the best quality/weight ratio. You can choose to further reduce this weight if you have strong constraints. The tool allows you to easily view the before / after to guide your choice. Compression is done on the side of your browser, not their server, ensuring more privacy. Want to go further? The site even allows you to store your compressed images by logging in via Blockstack. It's build using the Browser Image Compression NPM module. 
 
-The primary reason for this press release it to announce the open-source of Compress Studio. I'm looking for contributions from people to take this freelance project mine forward. The project is accessible at GitHub. 
+The primary reason for this press release it to announce the open-source of Compress Studio. I'm looking for contributions from people to take this freelance project of mine forward along with community. 
  
 Contact Person: Sam Joseph
 Email: samjoseph.it@gmail.com
