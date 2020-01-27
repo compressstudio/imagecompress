@@ -10,8 +10,5 @@ There are already many online tools to reduce the weight of your images. But Com
 
 The primary reason for this press release it to announce the open-source of Compress Studio. I'm looking for contributions from people to take this freelance project mine forward. The project is accessible at GitHub. 
  
-
-Website: https://compress.studio
-Company Name: Compress Studio
 Contact Person: Sam Joseph
 Email: samjoseph.it@gmail.com
