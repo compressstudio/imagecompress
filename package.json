@@ -18,6 +18,7 @@
     "@angular/forms": "~8.2.5",
     "@angular/platform-browser": "~8.2.5",
     "@angular/platform-browser-dynamic": "~8.2.5",
+    "@angular/pwa": "^0.6.8",
     "@angular/router": "~8.2.5",
     "@ng-bootstrap/ng-bootstrap": "^4.1.1",
     "blockstack": "19.2.1",
@@ -30,7 +31,8 @@
     "scrollmagic": "^2.0.7",
     "scrollmagic-plugin-gsap": "^1.0.3",
     "tslib": "^1.10.0",
-    "zone.js": "~0.9.1"
+    "zone.js": "~0.9.1",
+    "@angular/service-worker": "~8.2.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.803.4",

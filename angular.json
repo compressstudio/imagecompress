@@ -26,6 +26,7 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
+              "src/appmanifest.json",
               "src/manifest.json"
             ],
             "styles": [
@@ -63,7 +64,8 @@
                   "maximumWarning": "6kb",
                   "maximumError": "10kb"
                 }
-              ]
+              ],
+              "serviceWorker": true
             }
           }
         },
@@ -93,7 +95,8 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.json"
             ],
             "styles": [
               "src/styles.scss"
@@ -128,6 +131,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "webworker"
 }
