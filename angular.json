@@ -27,6 +27,7 @@
               "src/favicon.ico",
               "src/assets",
               "src/appmanifest.json",
+              "src/manifest.json",
               "src/manifest.json"
             ],
             "styles": [
@@ -65,7 +66,8 @@
                   "maximumError": "10kb"
                 }
               ],
-              "serviceWorker": true
+              "serviceWorker": true,
+              "ngswConfigPath": "ngsw-config.json"
             }
           }
         },
@@ -96,6 +98,7 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
+              "src/manifest.json",
               "src/manifest.json"
             ],
             "styles": [

@@ -27,9 +27,21 @@ import { environment } from '../environments/environment';
     // Pagination
     NgbPaginationModule,
     NgbTooltipModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
+  
+    ServiceWorkerModule.register('./ngsw-worker.js', { enabled: environment.production })
+
+
+    
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+
+
+
+
+
+export class AppModule {
+
+  
+ }
