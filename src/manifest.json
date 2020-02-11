@@ -1,6 +1,7 @@
 {
-  "name": "webworker",
-  "short_name": "webworker",
+  "name": "Compress Studio",
+  "short_name": "Compress Studio",
+  "description":"A serverless image compression tool",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
@@ -11,7 +12,7 @@
 
     {
       "src": "assets/icons/icon-48x48.png",
-      "sizes": "384x384",
+      "sizes": "48x48",
       "type": "image/png"
     },
     {
