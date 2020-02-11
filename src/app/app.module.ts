@@ -8,6 +8,8 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { ManageComponent } from './components/manage/manage.component';
 import { AuthGuard } from './services/AuthGuard ';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 
 @NgModule({
@@ -24,7 +26,8 @@ import { AuthGuard } from './services/AuthGuard ';
 
     // Pagination
     NgbPaginationModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    ServiceWorkerModule.register('./ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]

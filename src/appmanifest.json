@@ -1,0 +1,13 @@
+{
+  "name": "Compress Studio",
+  "short_name": "Compress Studio",
+  "description": "Compress Studio",
+  "icons": [
+    {
+      "src": "https://compress.studio/favicon.ico",
+      "sizes": "400x400",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "https://compress.studio"
+}
