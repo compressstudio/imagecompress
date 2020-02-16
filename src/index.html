@@ -34,7 +34,7 @@
 		content="Compress.Studio is a serverless image compression tool with decentralized storage.">
 	<meta property="og:type" content="product">
 	<meta property="og:image:type" content="image/png" />
-	<meta property="og:image" content="https://compress.studio/assets/images/compress-studio.png">
+	<meta property="og:image" content="https://compress.studio/assets/images/compress-studio.webp">
 
 	<!-- Twitter Meta Tags -->
 	<meta name="twitter:card" content="summary" />
@@ -45,18 +45,23 @@
 		content="Compress.Studio | Serverless Image Compression with Decentralized Storage" />
 	<meta property="twitter:description"
 		content="Compress.Studio is a serverless image compression tool with decentralized storage." />
-	<meta property="twitter:image" content="https://compress.studio/assets/images/compress-studio.png" />
+	<meta property="twitter:image" content="https://compress.studio/assets/images/compress-studio.webp" />
+	<!-- preload is used for PWA performance -->
+	<link rel="preload" href="assets/css/bootstrap.min.css" type="text/css" media="all" as="style"   onload="this.onload=null;this.rel='stylesheet'"/>
+	<link rel="preload" href="assets/css/twentytwenty.css" type="text/css" media="all" as="style"   onload="this.onload=null;this.rel='stylesheet'" />
+		
+	<noscript>
+		<link rel="stylesheet" href="styles.464f2aa5b2b7bb8e7752.css">
+	</noscript>
 
-	<link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="screen" />
-
-	<!-- Twenty Twenty Image slider -->
 	<script src="assets/js/jquery-3.2.1.min.js" type="text/javascript"></script>
-	<script src="assets/js/jquery.event.move.js" type="text/javascript"></script>
-	<script src="assets/js/jquery.twentytwenty.js" type="text/javascript"></script>
-	<link rel="stylesheet" href="assets/css/twentytwenty.css" type="text/css" media="screen" />
-
+	<script async src="assets/js/jquery.event.move.js" type="text/javascript"></script>
+	<script async src="assets/js/jquery.twentytwenty.js" type="text/javascript" onload="callFunc();"></script>
+	
 	<script>
-		$(window).on('load', function () { $("#beforeafter").twentytwenty(); });
+		function callFunc() {
+			$(window).on('load', function () { $("#beforeafter").twentytwenty(); });
+		}
 	</script>
 
   <link rel="manifest" href="manifest.json">
@@ -72,12 +77,15 @@
 	<app-root>
 		<div style="align-items: center; display: flex; justify-content: center; height: 100vh;">
 			<div style="align-items: center; text-align: center;">
-				<img src="../../../assets/images/compress-studio.png" style="width: 70px;">
+				<img alt="" src="../../../assets/images/compress-studio.webp" style="width: 70px;">
 				<br />
 				<div class="spinner-border text-muted" style="width: 1.5rem; height: 1.5rem; margin-top: 10px;"></div>
 			</div>
 		</div>
 	</app-root>
+
+	
+    
 </body>
 
 </html>
