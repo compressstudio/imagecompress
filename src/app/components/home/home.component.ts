@@ -7,11 +7,14 @@ import { sha256 } from 'js-sha256';
 import { BlockstackService } from 'src/app/services/blockstack.service';
 import * as ScrollMagic from 'scrollmagic';
 
+import { ConnectionService } from "ng-connection-service";
+
 import {
   TimelineMax, TweenMax, Linear, Elastic
 } from 'gsap'
 
 import { ScrollMagicPluginGsap } from "scrollmagic-plugin-gsap";
+import { Key } from 'protractor';
 
 declare var $: any;
 
@@ -33,9 +36,13 @@ export class HomeComponent {
   // Blockstack variable
   bs = blockstack;
 
+  status = 'online';
+  isConnected = true;
+ 
+
   // Before and after compress
-  beforeImg = "../../../assets/images/compress-studio-before.jpg";
-  afterImg = "../../../assets/images/compress-studio-after.jpg";
+  beforeImg = "../../../assets/images/compress-studio-before.webp";
+  afterImg = "../../../assets/images/compress-studio-after.webp";
   originalImageFile = null;
 
   beforeImgSize = 543.24;
@@ -59,7 +66,8 @@ export class HomeComponent {
 
   // My Images
   images;
-
+  //IndexedDB Database
+  db: IDBDatabase;
   // Is it IE/Edge Browser
   isIEOrEdge = false;
 
@@ -76,7 +84,75 @@ export class HomeComponent {
   constructor(private route: ActivatedRoute,
     private router: Router,
     private httpClient: HttpClient,
-    public blockstackService: BlockstackService) {
+    public blockstackService: BlockstackService,
+    private connectionService: ConnectionService ) {
+
+     //if connected online from offline check indexedDB 
+      this.connectionService.monitor().subscribe(isConnected => {
+        this.isConnected = isConnected;
+        if (this.isConnected) {
+          this.status = "online";
+          var transaction = this.db.transaction(["images"], "readwrite");
+          var objectStore = transaction.objectStore("images");
+
+          //get items from indexedDB  
+          var items = [];
+               
+          var cursorRequest = objectStore.openCursor();
+          cursorRequest.onsuccess = function(evt:any) {                    
+          var cursor = evt.target.result;
+             if (cursor) {
+              items.push(cursor.value);
+              cursor.continue();
+             }
+         };
+         cursorRequest.onerror = function(error) {
+           console.log(error);
+       };
+
+         
+       transaction.oncomplete = (evt) => {  
+           if(items.length > 0) {
+             var len = items.length;
+             for (var i = 0; i < len; i += 1) {
+                 let localItem = items[i];
+
+                 //store in gaia
+                 this.saveImage(localItem.name, localItem.size, localItem.file, localItem.image);
+             }            
+           }
+         };  
+        }
+        else {
+          this.status = "offline";
+        }
+      })
+
+
+
+      //Open IndexedDB
+      var request = indexedDB.open("compressDB", 2);
+      request.onerror = function(event) {
+       console.error("Error creating/accessing IndexedDB database");
+     };
+     request.onsuccess = event => {
+       this.db = request.result;
+       console.log("Success creating/accessing IndexedDB database");
+ 
+       //reader.readAsDataURL(file);
+       this.db.onerror = event => {
+         console.error("Error creating/accessing IndexedDB database");
+       };
+     };
+     // Create Object Store
+     request.onupgradeneeded = event => {
+       console.log("Creating object store");
+       this.db = request.result;
+       this.db.createObjectStore("images");
+     };
+ 
+
+
 
     // Initialize the scroll magic
     ScrollMagicPluginGsap(ScrollMagic, TweenMax, TimelineMax);
@@ -103,7 +179,7 @@ export class HomeComponent {
     });
 
     // Get the original Image first time
-    this.getImage("../../../assets/images/compress-studio-before.jpg");
+    this.getImage("../../../assets/images/compress-studio-before.webp");
 
     // Get all images from Gaia
     if (this.blockstackService.userSession.isUserSignedIn()) {
@@ -112,6 +188,8 @@ export class HomeComponent {
       // If it is in progress
       this.blockstackService.userSession.handlePendingSignIn()
         .then((userData) => {
+          //sync offline indexedDB to gaia
+       //   this.syncOfflineImagesToGaia();
           this.getImagesFromGaia();
         });
     }
@@ -290,12 +368,17 @@ export class HomeComponent {
 
         // save image, if user logged in
         if (this.blockstackService.userSession && this.blockstackService.userSession.isUserSignedIn()) {
-          this.saveImage(this.downloadImageName, afterImgFile.size, sha256(btoa(afterImgBinaryString)), this.afterImg);
+          try {
+            // Store on Gaia storage
+            //this.saveImage(this.downloadImageName, afterImgFile.size, sha256(btoa(afterImgBinaryString)), this.afterImg);
+            this.saveImageToIndexedDB(this.downloadImageName, afterImgFile.size, sha256(btoa(afterImgBinaryString)), this.afterImg);
+            console.log("Success stored in gaia");
+          } catch {
+            console.log("Not stored in gaia");
+          }
         }
-
         this.isProcessing = false;
       };
-
     };
     reader.readAsBinaryString(beforeImgFile);
   }
@@ -308,24 +391,67 @@ export class HomeComponent {
    */
   saveImage(imgName, imgSize, sha256Hash, imgFile) {
     // imgName, imgSize, Date and sha256 hash
+    //empty images.. so lets initialize it
+    if(!this.images){
+      this.images = [];
+    }
+    
+    let image = {
+      "name": imgName,
+      "size": imgSize,
+      "date": Date.now(),
+      "file": sha256Hash,
+      
+    };
+
+      // Save image and index
+    this.blockstackService.userSession.putFile(sha256Hash, imgFile).then((response) => {
+        // Update Index
+        this.images.unshift(image);
+        // Save index
+        this.blockstackService.userSession.putFile("images.json", JSON.stringify(this.images)).then((response) => {
+            // delete the current file from local indexedDB
+            var transaction = this.db.transaction(["images"], "readwrite");
+            transaction.objectStore("images").delete(sha256Hash).onsuccess = (event) => {
+                console.log("cleared uploaded file sucessfully from local");
+            }
+        });
+      });
+  }
+
+
+  /**
+   * Save image to offline indexedDB
+   * @param imgName 
+   * @param imgSize 
+   * @param imgFile 
+   */
+  saveImageToIndexedDB(imgName, imgSize, sha256Hash, imgFile) {
+    // imgName, imgSize, Date and sha256 hash
     if (this.images) {
 
       let image = {
         "name": imgName,
         "size": imgSize,
         "date": Date.now(),
-        "file": sha256Hash
+        "file": sha256Hash,
+        "image":imgFile
       };
+      var transaction = this.db.transaction(["images"], "readwrite");
+      // file.name = key and data = value
+      var put = transaction.objectStore("images").put(image,image.file);
+      put.onsuccess = () => {
+        console.log("stores sucessfully to localDB");
 
-      // Save image and index
-      this.blockstackService.userSession.putFile(sha256Hash, imgFile).then((response) => {
+      //if online store in gaia
 
-        // Update Index
-        this.images.unshift(image);
-
-        // Save index
-        this.blockstackService.userSession.putFile("images.json", JSON.stringify(this.images));
-      });
+        if(this.status=="online") {
+           this.saveImage(imgName, imgSize, sha256Hash, imgFile); 
+        }
+      }
+      put.onerror=()=> {
+        console.log("Error while storing data");
+      }
     }
   }
 
@@ -343,27 +469,30 @@ export class HomeComponent {
     });
   }
 
+ 
   /**
    * Get all my images from gaia.
    */
   getImagesFromGaia() {
-
-    // Get all images
-    this.blockstackService.userSession.getFile("images.json")
+    try{
+      // Get all images
+      this.blockstackService.userSession.getFile("images.json")
       .then((fileContents) => {
         console.log(fileContents);
-
-        if (fileContents != null) { // if it exists, load to view
+        //append to gaia
+        if (fileContents != null && fileContents.length > 3) { // if it exists, load to view
           this.images = JSON.parse(fileContents);
-        } else { // Initialize empty
+        } else { // Initialize empty 
           this.images = [];
         }
-
       },
-        error => {
-          console.error(error);
-          this.images = [];
-        });
+      error => {
+        //console.error(error);
+        this.images = [];
+      });
+    } catch(e) {
+      this.images = [];
+    }
   }
 
   /**
