@@ -480,7 +480,7 @@ export class HomeComponent {
       .then((fileContents) => {
         console.log(fileContents);
         //append to gaia
-        if (fileContents != null && fileContents.length > 3) { // if it exists, load to view
+        if (fileContents != null) { // if it exists, load to view
           this.images = JSON.parse(fileContents);
         } else { // Initialize empty 
           this.images = [];
