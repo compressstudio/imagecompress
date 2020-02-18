@@ -6,7 +6,7 @@
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "/",
-  "start_url": "http://127.0.0.1:8080/",
+  "start_url": "https://compress.studio/",
   "icons": [
     {
       "src": "assets/icons/icon-48x48.png",
