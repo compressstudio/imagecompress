@@ -27,7 +27,6 @@
     "font-awesome": "^4.7.0",
     "gsap": "^2.1.3",
     "js-sha256": "^0.9.0",
-    "ng-connection-service": "^1.0.4",
     "rxjs": "~6.4.0",
     "scrollmagic": "^2.0.7",
     "scrollmagic-plugin-gsap": "^1.0.3",

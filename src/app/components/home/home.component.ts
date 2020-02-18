@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import * as blockstack from 'blockstack';
 import imageCompression from 'browser-image-compression';
 import { sha256 } from 'js-sha256';
 import { BlockstackService } from 'src/app/services/blockstack.service';
 import * as ScrollMagic from 'scrollmagic';
+import { fromEvent, Observable, Subscription } from 'rxjs';
 
-import { ConnectionService } from "ng-connection-service";
 
 import {
   TimelineMax, TweenMax, Linear, Elastic
@@ -29,15 +29,22 @@ if (typeof Worker !== 'undefined') {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
+
+  onlineEvent: Observable<Event>;
+  offlineEvent: Observable<Event>;
+  subscriptions: Subscription[] = [];
+
+  connectionStatusMessage: string;
+  connectionStatus: string;
 
   // Variable
 
   // Blockstack variable
   bs = blockstack;
 
-  status = 'online';
-  isConnected = true;
+ 
+  //isConnected = true;
  
 
   // Before and after compress
@@ -84,52 +91,7 @@ export class HomeComponent {
   constructor(private route: ActivatedRoute,
     private router: Router,
     private httpClient: HttpClient,
-    public blockstackService: BlockstackService,
-    private connectionService: ConnectionService ) {
-
-     //if connected online from offline check indexedDB 
-      this.connectionService.monitor().subscribe(isConnected => {
-        this.isConnected = isConnected;
-        if (this.isConnected) {
-          this.status = "online";
-          var transaction = this.db.transaction(["images"], "readwrite");
-          var objectStore = transaction.objectStore("images");
-
-          //get items from indexedDB  
-          var items = [];
-               
-          var cursorRequest = objectStore.openCursor();
-          cursorRequest.onsuccess = function(evt:any) {                    
-          var cursor = evt.target.result;
-             if (cursor) {
-              items.push(cursor.value);
-              cursor.continue();
-             }
-         };
-         cursorRequest.onerror = function(error) {
-           console.log(error);
-       };
-
-         
-       transaction.oncomplete = (evt) => {  
-           if(items.length > 0) {
-             var len = items.length;
-             for (var i = 0; i < len; i += 1) {
-                 let localItem = items[i];
-
-                 //store in gaia
-                 this.saveImage(localItem.name, localItem.size, localItem.file, localItem.image);
-             }            
-           }
-         };  
-        }
-        else {
-          this.status = "offline";
-        }
-      })
-
-
-
+    public blockstackService: BlockstackService) {
       //Open IndexedDB
       var request = indexedDB.open("compressDB", 2);
       request.onerror = function(event) {
@@ -150,10 +112,6 @@ export class HomeComponent {
        this.db = request.result;
        this.db.createObjectStore("images");
      };
- 
-
-
-
     // Initialize the scroll magic
     ScrollMagicPluginGsap(ScrollMagic, TweenMax, TimelineMax);
 
@@ -196,9 +154,70 @@ export class HomeComponent {
 
   }
 
+  ngOnInit() {
+
+    this.onlineEvent = fromEvent(window, 'online');
+    this.offlineEvent = fromEvent(window, 'offline');
+
+    this.subscriptions.push(this.onlineEvent.subscribe(e => {
+      this.connectionStatusMessage = 'Back to online';
+      this.connectionStatus = 'online';
+      console.log('Online...');
+      this.syncLocalImages();
+    }));
+
+    this.subscriptions.push(this.offlineEvent.subscribe(e => {
+      this.connectionStatusMessage = 'Connection lost! You are not connected to internet';
+      this.connectionStatus = 'offline';
+      console.log('Offline...');
+    }));
+    
+  }
+
+  syncLocalImages(): void {
+      var transaction = this.db.transaction(["images"], "readwrite");
+      var objectStore = transaction.objectStore("images");
+
+      //get items from indexedDB  
+      var items = [];
+           
+      var cursorRequest = objectStore.openCursor();
+      cursorRequest.onsuccess = function(evt:any) {                    
+      var cursor = evt.target.result;
+         if (cursor) {
+          items.push(cursor.value);
+          cursor.continue();
+         }
+      };
+     cursorRequest.onerror = function(error) {
+       console.log(error);
+      };
+      transaction.oncomplete = (evt) => {  
+        this.delay(10000).then(any=>{
+          if(items.length > 0) {
+            var len = items.length;
+            for (var i = 0; i < len; i += 1) {
+                let localItem = items[i];
+                //store in gaia
+                this.saveImage(localItem.name, localItem.size, localItem.file, localItem.image);
+            }            
+          }
+        });
+      }; 
+  }
+
+
+  ngOnDestroy(): void {
+    /**
+    * Unsubscribe all subscriptions to avoid memory leak
+    */
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
   ngAfterViewInit() {
     // Load the animaztion
     //this.initScrollMagicAnimation();
+    
   }
 
   /**
@@ -383,6 +402,10 @@ export class HomeComponent {
     reader.readAsBinaryString(beforeImgFile);
   }
 
+
+  async delay(ms: number) {
+    await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
+  }
   /**
    * 
    * @param imgName 
@@ -416,6 +439,23 @@ export class HomeComponent {
                 console.log("cleared uploaded file sucessfully from local");
             }
         });
+      },error => {
+        this.delay(10000).then(any=>{
+          this.blockstackService.userSession.putFile(sha256Hash, imgFile).then((response) => {
+            // Update Index
+            this.images.unshift(image);
+            // Save index
+            this.blockstackService.userSession.putFile("images.json", JSON.stringify(this.images)).then((response) => {
+                // delete the current file from local indexedDB
+                var transaction = this.db.transaction(["images"], "readwrite");
+                transaction.objectStore("images").delete(sha256Hash).onsuccess = (event) => {
+                    console.log("cleared uploaded file sucessfully from local");
+                }
+            });
+          },error => {
+            console.log("Error uploadin image")
+          });
+        });
       });
   }
 
@@ -445,7 +485,7 @@ export class HomeComponent {
 
       //if online store in gaia
 
-        if(this.status=="online") {
+        if(this.connectionStatus == 'online') {
            this.saveImage(imgName, imgSize, sha256Hash, imgFile); 
         }
       }
