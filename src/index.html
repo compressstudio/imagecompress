@@ -49,19 +49,23 @@
 	<!-- preload is used for PWA performance -->
 	<link rel="preload" href="assets/css/bootstrap.min.css" type="text/css" media="all" as="style"   onload="this.onload=null;this.rel='stylesheet'"/>
 	<link rel="preload" href="assets/css/twentytwenty.css" type="text/css" media="all" as="style"   onload="this.onload=null;this.rel='stylesheet'" />
-		
+	<!--<link rel="prefetch"  as="worker" href="angular/imagecompress/node_modules/terser-webpack-plugin/dist/worker.js">-->
 	<noscript>
 		<link rel="stylesheet" href="styles.464f2aa5b2b7bb8e7752.css">
 	</noscript>
 
-	<script src="assets/js/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<script src="assets/js/jquery-3.4.1.min.js" type="text/javascript"></script>
 	<script async src="assets/js/jquery.event.move.js" type="text/javascript"></script>
 	<script async src="assets/js/jquery.twentytwenty.js" type="text/javascript" onload="callFunc();"></script>
 	
 	<script>
 		function callFunc() {
-			$(window).on('load', function () { $("#beforeafter").twentytwenty(); });
+			$(window).on('load', function () { 
+				$("#beforeafter").twentytwenty(); 
+			});
 		}
+
+		
 	</script>
 
   <link rel="manifest" href="manifest.json">

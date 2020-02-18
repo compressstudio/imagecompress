@@ -1,5 +1,11 @@
   <!-- needs this header for PW -->
   <h1></h1>
+  
+  <app-online-status
+  [onlineStatusMessage]="connectionStatusMessage"
+  [onlineStatus]="connectionStatus">
+  </app-online-status>
+
   <div class="container-fluid">
 
   <div class="row">
@@ -360,6 +366,8 @@
           </div>
         </div>
 
+        
+
         <!-- Manage View -->
         <div class="col-md-11">
 
@@ -403,5 +411,5 @@
             style="color: #01636c; font-size: 15px;">Browser Compression</a>
         </div>
       </div>
-
+     
     </div>

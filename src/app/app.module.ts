@@ -10,21 +10,21 @@ import { ManageComponent } from './components/manage/manage.component';
 import { AuthGuard } from './services/AuthGuard ';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-
+import { OnlineStatusComponent } from './components/online-status/online-status.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ManageComponent
+    ManageComponent,
+    OnlineStatusComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-
-    // Pagination
+     // Pagination
     NgbPaginationModule,
     NgbTooltipModule,
     ServiceWorkerModule.register('./ngsw-worker.js', { enabled: environment.production })
