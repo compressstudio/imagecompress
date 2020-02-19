@@ -48,8 +48,9 @@ export class HomeComponent implements OnInit, OnDestroy {
  
 
   // Before and after compress
-  beforeImg = "../../../assets/images/compress-studio-before.webp";
-  afterImg = "../../../assets/images/compress-studio-after.webp";
+  beforeImg = "../../../assets/images/compress-studio-before.jpg";
+  afterImg = "../../../assets/images/compress-studio-after.jpg";
+ 
   originalImageFile = null;
 
   beforeImgSize = 543.24;
@@ -137,7 +138,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
 
     // Get the original Image first time
-    this.getImage("../../../assets/images/compress-studio-before.webp");
+    this.getImage("../../../assets/images/compress-studio-before.jpg");
 
     // Get all images from Gaia
     if (this.blockstackService.userSession.isUserSignedIn()) {
@@ -154,7 +155,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   }
 
+  
+
   ngOnInit() {
+
+    
 
     this.onlineEvent = fromEvent(window, 'online');
     this.offlineEvent = fromEvent(window, 'offline');
