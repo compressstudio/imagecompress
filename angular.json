@@ -28,7 +28,7 @@
               "src/assets",
               "src/appmanifest.json",
               "src/manifest.json",
-              {"glob": "robots.txt", "input": "src/assets", "output": "/"}
+              "src/robots.txt"
             ],
             "styles": [
               "node_modules/font-awesome/css/font-awesome.css",
@@ -100,7 +100,7 @@
               "src/assets",
               "src/appmanifest.json",
               "src/manifest.json",
-              {"glob": "robots.txt", "input": "src/assets", "output": "/"},
+              "src/robots.txt"
             ],
             "styles": [
               "src/styles.scss"
