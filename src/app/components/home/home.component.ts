@@ -482,12 +482,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       var put = transaction.objectStore("images").put(image,image.file);
       put.onsuccess = () => {
         console.log("stores sucessfully to localDB");
-
-      //if online store in gaia
-
-        if(this.connectionStatus == 'online') {
-           this.saveImage(imgName, imgSize, sha256Hash, imgFile); 
-        }
+        //if online store in gaia
+        this.saveImage(imgName, imgSize, sha256Hash, imgFile); 
       }
       put.onerror=()=> {
         console.log("Error while storing data");
