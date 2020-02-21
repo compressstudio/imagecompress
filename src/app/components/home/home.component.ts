@@ -101,7 +101,8 @@ export class HomeComponent implements OnInit, OnDestroy {
      request.onsuccess = event => {
        this.db = request.result;
        console.log("Success creating/accessing IndexedDB database");
- 
+
+       this.syncLocalImages(false);
        //reader.readAsDataURL(file);
        this.db.onerror = event => {
          console.error("Error creating/accessing IndexedDB database");
@@ -112,6 +113,8 @@ export class HomeComponent implements OnInit, OnDestroy {
        console.log("Creating object store");
        this.db = request.result;
        this.db.createObjectStore("images");
+
+       this.syncLocalImages(false);
      };
     // Initialize the scroll magic
     ScrollMagicPluginGsap(ScrollMagic, TweenMax, TimelineMax);
@@ -168,7 +171,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.connectionStatusMessage = 'Back to online';
       this.connectionStatus = 'online';
       console.log('Online...');
-      this.syncLocalImages();
+      this.syncLocalImages(true);
     }));
 
     this.subscriptions.push(this.offlineEvent.subscribe(e => {
@@ -179,7 +182,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     
   }
 
-  syncLocalImages(): void {
+  syncLocalImages(flag): void {
       var transaction = this.db.transaction(["images"], "readwrite");
       var objectStore = transaction.objectStore("images");
 
@@ -197,8 +200,20 @@ export class HomeComponent implements OnInit, OnDestroy {
      cursorRequest.onerror = function(error) {
        console.log(error);
       };
-      transaction.oncomplete = (evt) => {  
-        this.delay(10000).then(any=>{
+      transaction.oncomplete = (evt) => { 
+        
+        if(flag) {
+          this.delay(10000).then(any=>{
+            if(items.length > 0) {
+              var len = items.length;
+              for (var i = 0; i < len; i += 1) {
+                  let localItem = items[i];
+                  //store in gaia
+                  this.saveImage(localItem.name, localItem.size, localItem.file, localItem.image);
+              }            
+            }
+          });
+        } else {
           if(items.length > 0) {
             var len = items.length;
             for (var i = 0; i < len; i += 1) {
@@ -207,7 +222,8 @@ export class HomeComponent implements OnInit, OnDestroy {
                 this.saveImage(localItem.name, localItem.size, localItem.file, localItem.image);
             }            
           }
-        });
+        }
+        
       }; 
   }
 
@@ -445,22 +461,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             }
         });
       },error => {
-        this.delay(10000).then(any=>{
-          this.blockstackService.userSession.putFile(sha256Hash, imgFile).then((response) => {
-            // Update Index
-            this.images.unshift(image);
-            // Save index
-            this.blockstackService.userSession.putFile("images.json", JSON.stringify(this.images)).then((response) => {
-                // delete the current file from local indexedDB
-                var transaction = this.db.transaction(["images"], "readwrite");
-                transaction.objectStore("images").delete(sha256Hash).onsuccess = (event) => {
-                    console.log("cleared uploaded file sucessfully from local");
-                }
-            });
-          },error => {
-            console.log("Error uploadin image")
-          });
-        });
+        
       });
   }
 

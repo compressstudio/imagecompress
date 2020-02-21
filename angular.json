@@ -24,11 +24,11 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
-              "src/robots.txt",
               "src/favicon.ico",
               "src/assets",
               "src/appmanifest.json",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/robots.txt"
             ],
             "styles": [
               "node_modules/font-awesome/css/font-awesome.css",
@@ -96,11 +96,11 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": [
-              "src/robots.txt",
               "src/favicon.ico",
               "src/assets",
               "src/appmanifest.json",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/robots.txt"
             ],
             "styles": [
               "src/styles.scss"
