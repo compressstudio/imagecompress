@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "org.blocksurvey.compressstudio",
+    "sha256_cert_fingerprints":
+    ["B4:DC:4F:FF:C2:40:8F:64:C6:B4:69:42:7C:16:A8:02:5F:28:EC:EC:96:2A:95:7A:39:39:51:6C:DD:01:D8:67"]
+  }
+}]

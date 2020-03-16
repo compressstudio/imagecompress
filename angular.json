@@ -28,7 +28,8 @@
               "src/assets",
               "src/appmanifest.json",
               "src/manifest.json",
-              "src/robots.txt"
+              "src/robots.txt",
+              "src/.well-known/assetlinks.json"
             ],
             "styles": [
               "node_modules/font-awesome/css/font-awesome.css",
