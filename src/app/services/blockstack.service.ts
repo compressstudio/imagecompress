@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppConfig, UserSession } from 'blockstack';
+import { showBlockstackConnect } from '@blockstack/connect';
+import { authenticate } from '@blockstack/connect';
 
 
 @Injectable({
@@ -39,8 +41,25 @@ export class BlockstackService {
   * Blockstack Login
   */
   login() {
-    // Login page of Blockstack    
-    this.userSession.redirectToSignIn();
+
+   // Login page of Blockstack
+    //new blockstack auth
+    const icon='../../../assets/images/compress-studio.png';
+    const authOptions = { 
+      redirectTo: '/',
+      manifestPath: '/manifest.json',
+   //  authOrigin: "http://localhost:4200",
+      sendToSignIn: true,
+      userSession: this.userSession,
+      appDetails: {
+        name: 'Compress Studio',
+        icon
+       
+      }
+    };
+    showBlockstackConnect(authOptions);
+       
+    // this.userSession.redirectToSignIn();
   }
 
   /**
