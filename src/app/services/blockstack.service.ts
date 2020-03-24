@@ -44,16 +44,16 @@ export class BlockstackService {
 
    // Login page of Blockstack
     //new blockstack auth
-    const icon='../../../assets/images/compress-studio.png';
+   
     const authOptions = { 
       redirectTo: '/',
       manifestPath: '/manifest.json',
    //  authOrigin: "http://localhost:4200",
-      sendToSignIn: true,
+      sendToSignIn: false,
       userSession: this.userSession,
       appDetails: {
         name: 'Compress Studio',
-        icon
+        icon:'https://compress.studio/favicon.ico'
        
       }
     };
